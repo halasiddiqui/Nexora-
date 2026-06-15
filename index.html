@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora — AI-Powered Gift Discovery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0a06;
+    --bg2: #12100a;
+    --card: #1a1610;
+    --gold: #c0392b;
+    --gold-light: #e74c3c;
+    --cream: #f5ede0;
+    --muted: #7a6e62;
+    --white: #ffffff;
+    --red: #c0392b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(13,10,6,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(192,57,43,0.15);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
+  .logo span { color: var(--cream); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--cream); text-decoration: none;
+    font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    transition: color 0.3s;
+    cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: var(--gold);
+    color: var(--bg) !important;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    font-weight: 600 !important;
+  }
+  .nav-cta:hover { background: var(--gold-light) !important; color: var(--bg) !important; }
+
+  /* ── SECTIONS ── */
+  section { display: none; }
+  section.active, section:target { display: block; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(192,57,43,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(192,57,43,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-h1 em { color: var(--gold); font-style: italic; }
+  .hero-sub {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    letter-spacing: 0.04em;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(245,237,224,0.3);
+    padding: 0.9rem 2.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.3s, color 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  .floating-cards {
+    display: flex; gap: 1.2rem; margin-top: 4rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+  .fcard {
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.15);
+    border-radius: 12px;
+    padding: 1rem 1.4rem;
+    display: flex; align-items: center; gap: 0.7rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .fcard .icon { font-size: 1.3rem; }
+
+  /* ── PRODUCTS ── */
+  #products {
+    padding: 7rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-label {
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .section-h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .section-sub { color: var(--muted); max-width: 480px; line-height: 1.6; margin-bottom: 3rem; }
+
+  .filter-bar {
+    display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+  }
+  .filter-btn {
+    padding: 0.45rem 1.1rem;
+    border-radius: 50px;
+    border: 1px solid rgba(192,57,43,0.2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.25s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem;
+  }
+  .product-card {
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(192,57,43,0.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .product-img {
+    height: 220px;
+    background: linear-gradient(135deg, #1e1a14, #2a2318);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; inset: 0;
+  }
+  .product-badge {
+    position: absolute; top: 0.8rem; left: 0.8rem;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+  }
+  .product-info { padding: 1.2rem; }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 0.3rem;
+  }
+  .product-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.5; margin-bottom: 0.9rem; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { color: var(--gold); font-weight: 600; font-size: 1rem; }
+  .add-cart-btn {
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.3);
+    color: var(--gold);
+    padding: 0.4rem 0.9rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-cart-btn:hover { background: var(--gold); color: var(--bg); }
+
+  /* ── CART ICON ── */
+  .cart-icon {
+    position: relative; cursor: pointer;
+  }
+  .cart-count {
+    position: absolute; top: -6px; right: -8px;
+    background: var(--red);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    display: none;
+  }
+
+  /* ── CART PANEL ── */
+  .cart-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    display: none;
+  }
+  .cart-overlay.open { display: block; }
+  .cart-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+  }
+  .cart-panel {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 380px;
+    background: var(--card);
+    border-left: 1px solid rgba(192,57,43,0.15);
+    padding: 2rem;
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .cart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+  .cart-close { background: none; border: none; color: var(--cream); font-size: 1.5rem; cursor: pointer; }
+  .cart-items { flex: 1; }
+  .cart-item { display: flex; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .cart-item-emoji { font-size: 2rem; width: 50px; height: 50px; background: var(--bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cart-item-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.2rem; }
+  .cart-item-price { color: var(--gold); font-size: 0.85rem; }
+  .cart-remove { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; }
+  .cart-total { border-top: 1px solid rgba(192,57,43,0.2); padding-top: 1rem; margin-top: 0.5rem; }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+  .cart-total-label { color: var(--muted); }
+  .cart-total-value { color: var(--gold); font-weight: 700; font-size: 1.1rem; }
+  .cart-empty { text-align: center; color: var(--muted); padding: 3rem 0; font-size: 0.95rem; }
+
+  /* ── CUSTOMIZE ── */
+  #customize { padding: 7rem 4rem; }
+  .customize-wrap {
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;
+  }
+  .customize-form { display: flex; flex-direction: column; gap: 1.2rem; }
+  .form-group label { display: block; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.15);
+    color: var(--cream);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--gold); }
+  .form-group select option { background: var(--card); }
+  .form-group textarea { height: 100px; resize: vertical; }
+  .ai-result {
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    min-height: 300px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+  }
+  .ai-result .ai-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .ai-result p { color: var(--muted); font-size: 0.9rem; }
+  .ai-suggestions { display: none; }
+  .ai-suggestion-item {
+    background: rgba(192,57,43,0.06);
+    border: 1px solid rgba(192,57,43,0.15);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.7rem;
+    text-align: left;
+    font-size: 0.88rem;
+    display: flex; gap: 0.5rem; align-items: flex-start;
+  }
+
+  /* ── ABOUT ── */
+  #about { padding: 7rem 4rem; }
+  .about-wrap {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+  }
+  .about-visual {
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.1);
+    border-radius: 16px;
+    height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+  .about-visual .placeholder-text {
+    position: absolute;
+    bottom: 1rem; left: 1rem;
+    background: rgba(13,10,6,0.8);
+    color: var(--gold);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+  }
+  .values-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .value-item { display: flex; gap: 1rem; align-items: flex-start; }
+  .value-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: rgba(192,57,43,0.1);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .value-title { font-weight: 600; margin-bottom: 0.2rem; font-size: 0.9rem; }
+  .value-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+
+  /* ── REVIEWS ── */
+  #reviews { padding: 5rem 4rem; background: var(--bg2); }
+  .reviews-grid {
+    max-width: 1200px; margin: 2.5rem auto 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
+  }
+  .review-card {
+    background: var(--card);
+    border: 1px solid rgba(192,57,43,0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .review-card:hover { border-color: rgba(192,57,43,0.25); }
+  .review-stars { color: var(--gold); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 0.7rem; }
+  .review-text { color: var(--cream); font-size: 0.88rem; line-height: 1.65; margin-bottom: 1rem; font-style: italic; }
+  .review-author { display: flex; align-items: center; gap: 0.8rem; }
+  .review-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+  .review-name { font-size: 0.85rem; font-weight: 600; }
+  .review-location { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── CONTACT ── */
+  #contact { padding: 7rem 4rem; }
+  .contact-wrap {
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+  }
+  .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-detail { display: flex; gap: 1rem; align-items: flex-start; }
+  .contact-icon { font-size: 1.3rem; margin-top: 0.1rem; }
+  .contact-label { font-size: 0.75rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+  .contact-value { font-size: 0.9rem; color: var(--cream); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-submit {
+    width: 100%;
+    background: var(--gold);
+    border: none;
+    color: var(--bg);
+    padding: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .contact-submit:hover { background: var(--gold-light); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #080604;
+    border-top: 1px solid rgba(192,57,43,0.1);
+    padding: 3rem 4rem 2rem;
+    display: flex; flex-wrap: wrap; gap: 2rem;
+    justify-content: space-between; align-items: center;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.82rem; transition: color 0.3s; cursor: pointer; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy { color: var(--muted); font-size: 0.78rem; width: 100%; text-align: center; margin-top: 1rem; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--gold);
+    color: var(--bg);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    z-index: 3000;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── IMAGE UPLOAD PLACEHOLDER ── */
+  .img-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem; color: var(--muted); font-size: 0.82rem;
+  }
+  .img-placeholder .big { font-size: 2.5rem; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spinner {
+    width: 24px; height: 24px;
+    border: 2px solid rgba(192,57,43,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  /* ── IMAGE GUIDE ── */
+  .image-guide {
+    background: rgba(192,57,43,0.06);
+    border: 1px dashed rgba(192,57,43,0.3);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .image-guide strong { color: var(--gold); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #products, #customize, #about, #contact, #reviews { padding: 5rem 1.5rem; }
+    .customize-wrap, .about-wrap, .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .cart-panel { width: 100%; }
+    footer { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#home" onclick="showSection('home')">Nexora</a>
+  <ul class="nav-links">
+    <li><a href="#home" onclick="showSection('home')">Home</a></li>
+    <li><a href="#products" onclick="showSection('products')">Products</a></li>
+    <li><a href="#customize" onclick="showSection('customize')">Customize</a></li>
+    <li><a href="#about" onclick="showSection('about')">About Us</a></li>
+    <li><a href="#reviews" onclick="showSection('reviews')">Reviews</a></li>
+    <li><a href="#contact" onclick="showSection('contact')">Contact</a></li>
+    <li>
+      <a class="nav-cta cart-icon" onclick="toggleCart()">
+        🛒 Cart
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════ HOME ══════════════════════ -->
+<section id="home" class="active">
+  <div class="hero-bg"></div>
+  <div class="hero-tag">✦ AI-Powered Gift Discovery</div>
+  <h1 class="hero-h1">Gifting that <em>feels</em><br>like you.</h1>
+  <p class="hero-sub">Stop guessing. Our emotionally-aware AI reads the relationship, occasion, and personality — then finds the perfect gift for anyone in seconds.</p>
+  <div class="hero-btns">
+    <a href="#customize" class="btn-primary" onclick="showSection('customize')">Find a Gift with AI</a>
+    <a href="#products" class="btn-outline" onclick="showSection('products')">Browse Products</a>
+  </div>
+  <div class="floating-cards">
+    <div class="fcard"><span class="icon">🧠</span> Emotionally-Aware AI</div>
+    <div class="fcard"><span class="icon">🇵🇰</span> Pakistan & South Asia</div>
+    <div class="fcard"><span class="icon">⚡</span> Instant Recommendations</div>
+    <div class="fcard"><span class="icon">💝</span> Meaningful Connections</div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PRODUCTS ══════════════════════ -->
+<section id="products">
+  <div style="max-width:1400px;margin:0 auto;">
+
+    <div class="image-guide">
+      
+
+    <p class="section-label">✦ Our Collection</p>
+    <h2 class="section-h2">Curated with Care</h2>
+    <p class="section-sub">Every item selected for emotional resonance — not just trends.</p>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+      <button class="filter-btn" onclick="filterProducts('for-her',this)">For Her</button>
+      <button class="filter-btn" onclick="filterProducts('for-him',this)">For Him</button>
+      <button class="filter-btn" onclick="filterProducts('birthday',this)">Birthday</button>
+      <button class="filter-btn" onclick="filterProducts('luxury',this)">Luxury</button>
+      <button class="filter-btn" onclick="filterProducts('budget',this)">Budget Picks</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CUSTOMIZE ══════════════════════ -->
+<section id="customize">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-label">✦ AI Gift Finder</p>
+    <h2 class="section-h2">Personalize Your Gift</h2>
+    <p class="section-sub">Tell us about the person and occasion — our AI does the rest.</p>
+
+    <div class="customize-wrap">
+      <div class="customize-form">
+        <div class="form-group">
+          <label>Recipient Name</label>
+          <input type="text" id="recipientName" placeholder="e.g. Hina, Ahmed..."/>
+        </div>
+        <div class="form-group">
+          <label>Relationship</label>
+          <select id="relationship">
+            <option value="">Select relationship</option>
+            <option>Mother</option><option>Father</option><option>Sister</option>
+            <option>Brother</option><option>Friend</option><option>Partner / Spouse</option>
+            <option>Boss / Colleague</option><option>Teacher</option><option>Child</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Occasion</label>
+          <select id="occasion">
+            <option value="">Select occasion</option>
+            <option>Birthday</option><option>Eid</option><option>Wedding</option>
+            <option>Anniversary</option><option>Graduation</option>
+            <option>Thank You</option><option>Just Because</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Budget (PKR)</label>
+          <select id="budget">
+            <option>Under 2,000</option><option>2,000 – 5,000</option>
+            <option>5,000 – 15,000</option><option>15,000 – 50,000</option>
+            <option>50,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tell us about them</label>
+          <textarea id="personality" placeholder="e.g. She loves reading, chai, and sunsets. She's been stressed lately..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="getAISuggestions()" style="width:100%;">✨ Get AI Suggestions</button>
+      </div>
+
+      <div class="ai-result" id="aiResult">
+        <div class="spinner" id="aiSpinner"></div>
+        <div id="aiPlaceholder">
+          <div class="ai-icon">🎁</div>
+          <p>Fill in the details and let our AI find the most meaningful gifts for your loved one.</p>
+        </div>
+        <div class="ai-suggestions" id="aiSuggestions"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ ABOUT ══════════════════════ -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="about-visual">
+      <!-- REPLACE WITH YOUR IMAGE: <img src="YOUR_IMAGE_URL" alt="About Nexora"/> -->
+      <div class="img-placeholder">
+      </div>
+    </div>
+    <div>
+      <p class="section-label">✦ Our Story</p>
+      <h2 class="section-h2">We believe gifts should <em style="color:var(--gold);font-style:italic">mean</em> something.</h2>
+      <p style="color:var(--muted);line-height:1.75;margin-top:1rem;font-size:0.95rem;">
+        Nexora was born out of frustration — scrolling through endless generic lists, wasting hours, only to end up with something forgettable. We built an AI that actually <em>understands</em> people: their relationships, their culture, their moments.
+      </p>
+      <p style="color:var(--muted);line-height:1.75;margin-top:0.8rem;font-size:0.95rem;">
+        Built in Pakistan, trained on South Asian relationship and occasion dynamics — we bring the warmth of our culture to every recommendation.
+      </p>
+      <div class="values-list">
+        <div class="value-item">
+          <div class="value-icon">❤️</div>
+          <div><div class="value-title">Emotionally Intelligent</div><div class="value-desc">Our AI reads context, not just keywords.</div></div>
+        </div>
+        <div class="value-item">
+          <div class="value-icon">🌍</div>
+          <div><div class="value-title">Culturally Rooted</div><div class="value-desc">South Asian occasions, relationships & sensibilities — built in.</div></div>
+        </div>
+        <div class="value-item">
+          <div class="value-icon">⚡</div>
+          <div><div class="value-title">Instant & Effortless</div><div class="value-desc">Great gift ideas in under 30 seconds.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ REVIEWS ══════════════════════ -->
+<section id="reviews">
+  <div style="max-width:1200px;margin:0 auto;">
+    <p class="section-label" style="text-align:center;">✦ Customer Reviews</p>
+    <h2 class="section-h2" style="text-align:center;">What our customers say</h2>
+    <div class="reviews-grid" id="reviewsGrid"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CONTACT ══════════════════════ -->
+<section id="contact">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-label">✦ Get in Touch</p>
+    <h2 class="section-h2">We'd love to hear from you</h2>
+    <div class="contact-wrap" style="margin-top:2.5rem;">
+      <div class="contact-info">
+        <div class="contact-detail">
+          <span class="contact-icon">📍</span>
+          <div><div class="contact-label">Location</div><div class="contact-value">Karachi, Pakistan</div></div>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-icon">📧</span>
+          <div><div class="contact-label">Email</div><div class="contact-value">hello@Nexora.pk</div></div>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-icon">📱</span>
+          <div><div class="contact-label">WhatsApp</div><div class="contact-value">+92 300 0000000</div></div>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-icon">🕐</span>
+          <div><div class="contact-label">Hours</div><div class="contact-value">Mon – Sat, 10am – 8pm PKT</div></div>
+        </div>
+        <div style="margin-top:1rem;">
+          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.8rem;">Follow us</p>
+          <div style="display:flex;gap:0.8rem;">
+            <a href="#" style="color:var(--gold);font-size:1.3rem;text-decoration:none;">📸</a>
+            <a href="#" style="color:var(--gold);font-size:1.3rem;text-decoration:none;">🎵</a>
+            <a href="#" style="color:var(--gold);font-size:1.3rem;text-decoration:none;">💬</a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-group"><label>Your Name</label><input type="text" placeholder="Aisha Khan"/></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="aisha@example.com"/></div>
+        <div class="form-group"><label>Message</label><textarea placeholder="How can we help you?"></textarea></div>
+        <button class="contact-submit" onclick="sendMessage()">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Nexora</div>
+  <div class="footer-links">
+    <a href="#home" onclick="showSection('home')">Home</a>
+    <a href="#products" onclick="showSection('products')">Products</a>
+    <a href="#about" onclick="showSection('about')">About</a>
+    <a href="#contact" onclick="showSection('contact')">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Nexora. Made with ❤️ in Pakistan.</div>
+</footer>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay">
+  <div class="cart-backdrop" onclick="toggleCart()"></div>
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>Your Cart 🛒</h3>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"><div class="cart-empty">Your cart is empty.<br><br>Start browsing gifts! 🎁</div></div>
+    <div class="cart-total" id="cartTotal" style="display:none;">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-value" id="cartTotalValue">PKR 0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()">Proceed to Checkout →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const products = [
+  { id:1, name:"Artisan Scented Candle Set", desc:"Hand-poured soy wax candles with jasmine, oud & rose — perfect for cosy evenings.", price:"PKR 2,800", num:2800, emoji:"🕯️", badge:"Bestseller", tags:["for-her","birthday"] },
+  { id:2, name:"Premium Leather Journal", desc:"Handcrafted goat leather journal with gold-edged pages. For the thinker in your life.", price:"PKR 3,500", num:3500, emoji:"📓", badge:"", tags:["for-him","for-her","birthday"] },
+  { id:3, name:"Oud & Amber Gift Box", desc:"A curated box of artisanal oud perfume, amber soap, and a reed diffuser.", price:"PKR 6,500", num:6500, emoji:"🎁", badge:"Luxury", tags:["luxury","for-her"] },
+  { id:4, name:"Handmade Pottery Mug", desc:"Each piece uniquely hand-thrown by local artisans. For the chai lover.", price:"PKR 1,800", num:1800, emoji:"☕", badge:"", tags:["budget","for-her","for-him"] },
+  { id:5, name:"Gold-Plated Calligraphy Frame", desc:"Quranic verse or custom name beautifully inscribed on archival paper in a gold frame.", price:"PKR 4,200", num:4200, emoji:"🖼️", badge:"Custom", tags:["for-her","for-him","birthday"] },
+  { id:6, name:"Gentleman's Grooming Kit", desc:"Cedar wood box with beard oil, balm, comb, and moisturiser. Curated for him.", price:"PKR 5,500", num:5500, emoji:"🪒", badge:"", tags:["for-him","birthday","luxury"] },
+  { id:7, name:"Silk Chiffon Dupatta", desc:"Hand-dyed silk chiffon with traditional motifs — a timeless piece.", price:"PKR 4,800", num:4800, emoji:"🧣", badge:"", tags:["for-her","luxury"] },
+  { id:8, name:"Mini Dessert Hamper", desc:"Assorted premium mithai, macarons & Belgian chocolates in a keepsake box.", price:"PKR 3,200", num:3200, emoji:"🍫", badge:"Sweet Pick", tags:["budget","birthday","for-her","for-him"] },
+  { id:9, name:"Eid Mubarak Celebration Box", desc:"A festive tray with baklava, dry fruits, and a handcrafted gift card for Eid joy.", price:"PKR 3,900", num:3900, emoji:"🌙", badge:"Eid Special", tags:["for-her","for-him","birthday","luxury"] },
+  { id:10, name:"Couple's Anniversary Keepsake", desc:"A luxury photo frame with a custom message card and rose-scented candle.", price:"PKR 5,800", num:5800, emoji:"💞", badge:"Anniversary", tags:["for-her","for-him","luxury"] },
+  { id:11, name:"Graduation Success Set", desc:"Premium leather planner, motivational desk plate, and gourmet coffee sachets.", price:"PKR 4,100", num:4100, emoji:"🎓", badge:"Achievement", tags:["for-her","for-him","budget"] },
+  { id:12, name:"Personalized Name Necklace", desc:"Custom gold-plated name necklace in an elegant velvet gift pouch.", price:"PKR 4,700", num:4700, emoji:"📿", badge:"Custom", tags:["for-her","birthday","luxury"] },
+  { id:13, name:"Wellness Self-Care Basket", desc:"A calming gift set with herbal teas, essential oils, and a cozy sleep mask.", price:"PKR 3,300", num:3300, emoji:"🛁", badge:"Relax", tags:["for-her","thank-you","just-because","budget"] },
+  { id:14, name:"Executive Travel Grooming Kit", desc:"Compact leather travel case with beard oil, shampoo, and grooming essentials.", price:"PKR 5,200", num:5200, emoji:"🧳", badge:"Travel", tags:["for-him","budget","luxury"] },
+];
+
+const reviews = [
+  { name:"Sana R.", loc:"Karachi", stars:5, text:"I was completely stuck on what to gift my mum for her birthday. The AI suggested a pottery mug and calligraphy frame — she literally cried happy tears. This platform gets it." },
+  { name:"Bilal A.", loc:"Lahore", stars:5, text:"The grooming kit was exactly what my brother needed. Came beautifully packaged. Nexora saved me so much time and I actually looked thoughtful for once!" },
+  { name:"Mariam K.", loc:"Islamabad", stars:5, text:"Finally a gifting platform that understands Pakistani occasions. The Eid gift box I ordered was stunning — everyone asked where I got it." },
+  { name:"Hassan T.", loc:"Dubai", stars:4, text:"Ordered for my wife's anniversary all the way from Dubai. The process was seamless and the oud set smelled absolutely divine. Will order again." },
+  { name:"Zara N.", loc:"Karachi", stars:5, text:"The customize feature is genius. I told it my friend loves chai and reading — it gave me the mug and journal combo instantly. It feels handpicked." },
+  { name:"Usman F.", loc:"Rawalpindi", stars:5, text:"Customer service was amazing. Had a query about packaging and they replied on WhatsApp within minutes. Very professional, very warm." },
+];
+
+// ── CART ──
+let cart = [];
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  const existing = cart.find(x => x.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...p, qty: 1 });
+  updateCartUI();
+  showToast(`✓ ${p.name} added to cart!`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const count = cart.reduce((s,x) => s + x.qty, 0);
+  const countEl = document.getElementById('cartCount');
+  countEl.textContent = count;
+  countEl.style.display = count > 0 ? 'flex' : 'none';
+
+  const itemsEl = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="cart-empty">Your cart is empty.<br><br>Start browsing gifts! 🎁</div>';
+    totalEl.style.display = 'none';
+  } else {
+    itemsEl.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-emoji">${item.emoji}</div>
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">${item.price} × ${item.qty}</div>
+        </div>
+        <button class="cart-remove" onclick="removeFromCart(${item.id})">✕</button>
+      </div>
+    `).join('');
+    const total = cart.reduce((s,x) => s + x.num * x.qty, 0);
+    document.getElementById('cartTotalValue').textContent = `PKR ${total.toLocaleString()}`;
+    totalEl.style.display = 'block';
+  }
+}
+
+function toggleCart() {
+  const overlay = document.getElementById('cartOverlay');
+  overlay.classList.toggle('open');
+}
+
+function checkout() {
+  showToast("🎉 Order placed! We'll WhatsApp you shortly.");
+  cart = [];
+  updateCartUI();
+  toggleCart();
+}
+
+// ── PRODUCTS RENDER ──
+function renderProducts(filtered) {
+  const grid = document.getElementById('productsGrid');
+  const list = filtered || products;
+  grid.innerHTML = list.map(p => `
+    <div class="product-card" data-tags="${p.tags.join(',')}">
+      <div class="product-img">
+        <!-- IMAGE SLOT: replace emoji with <img src="YOUR_URL" alt="${p.name}"/> -->
+        <span>${p.emoji}</span>
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <span class="product-price">${p.price}</span>
+          <button class="add-cart-btn" onclick="addToCart(${p.id})">+ Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProducts(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tag === 'all') renderProducts(products);
+  else renderProducts(products.filter(p => p.tags.includes(tag)));
+}
+
+// ── REVIEWS RENDER ──
+function renderReviews() {
+  document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+      <div class="review-text">"${r.text}"</div>
+      <div class="review-author">
+        <div class="review-avatar">${r.name[0]}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-location">📍 ${r.loc}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── AI SUGGESTIONS ──
+async function getAISuggestions() {
+  const name = document.getElementById('recipientName').value || 'them';
+  const rel = document.getElementById('relationship').value || 'someone special';
+  const occ = document.getElementById('occasion').value || 'a special occasion';
+  const budget = document.getElementById('budget').value;
+  const personality = document.getElementById('personality').value;
+
+  const spinner = document.getElementById('aiSpinner');
+  const placeholder = document.getElementById('aiPlaceholder');
+  const suggestions = document.getElementById('aiSuggestions');
+
+  spinner.style.display = 'block';
+  placeholder.style.display = 'none';
+  suggestions.style.display = 'none';
+
+  const budgetMap = {
+    'Under 2,000': 2000,
+    '2,000 – 5,000': 5000,
+    '5,000 – 15,000': 15000,
+    '15,000 – 50,000': 50000,
+    '50,000+': 999999
+  };
+
+  const maxPrice = budgetMap[budget] || 999999;
+  const lowerRel = rel.toLowerCase();
+  const tags = [];
+  if (lowerRel.includes('mother') || lowerRel.includes('sister') || lowerRel.includes('friend') || lowerRel.includes('partner') || lowerRel.includes('spouse')) tags.push('for-her');
+  if (lowerRel.includes('father') || lowerRel.includes('brother') || lowerRel.includes('husband') || lowerRel.includes('partner')) tags.push('for-him');
+  if (occ.toLowerCase().includes('birthday')) tags.push('birthday');
+  if (occ.toLowerCase().includes('wedding') || occ.toLowerCase().includes('anniversary') || occ.toLowerCase().includes('graduation') || occ.toLowerCase().includes('eid')) tags.push('luxury');
+  if (budget.startsWith('Under')) tags.push('budget');
+
+  const scoreProduct = p => {
+    let score = 0;
+    if (p.num <= maxPrice) score += 10;
+    tags.forEach(tag => { if (p.tags.includes(tag)) score += 6; });
+    const lowPersonality = personality.toLowerCase();
+    if (lowPersonality.includes('chai') && p.name.toLowerCase().includes('mug')) score += 5;
+    if (lowPersonality.includes('read') && p.name.toLowerCase().includes('journal')) score += 5;
+    if (lowPersonality.includes('scent') && p.name.toLowerCase().includes('oud')) score += 5;
+    return score;
+  };
+
+  const matched = products
+    .slice()
+    .filter(p => p.num <= maxPrice)
+    .sort((a, b) => scoreProduct(b) - scoreProduct(a))
+    .slice(0, 3)
+    .map(p => ({
+      emoji: p.emoji,
+      title: p.name,
+      price: p.price,
+      reason: `A thoughtful ${occ.toLowerCase()} gift idea for ${name} — ${p.desc}`
+    }));
+
+  suggestions.innerHTML = `
+    <div style="text-align:left;width:100%;">
+      <p style="font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:1rem;color:var(--cream);">✨ Suggested gifts for ${name}:</p>
+      ${matched.map(item => `
+        <div class="ai-suggestion-item">
+          <span style="font-size:1.4rem;">${item.emoji}</span>
+          <div>
+            <strong style="color:var(--cream);font-size:0.88rem;">${item.title}</strong>
+            <span style="color:var(--gold);font-size:0.78rem;margin-left:0.5rem;">${item.price}</span>
+            <p style="color:var(--muted);font-size:0.8rem;margin-top:0.2rem;">${item.reason}</p>
+          </div>
+        </div>
+      `).join('')}
+      <a href="#products" class="btn-primary" style="display:inline-block;margin-top:1rem;width:100%;font-size:0.85rem;text-align:center;" onclick="showSection('products')">Shop These Gifts →</a>
+    </div>
+  `;
+  suggestions.style.display = 'block';
+  spinner.style.display = 'none';
+}
+
+// ── CONTACT ──
+function sendMessage() {
+  showToast("✅ Message sent! We'll reply within 24 hours.");
+}
+
+// ── NAV ──
+function showSection(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  section.classList.add('active');
+  window.history.replaceState(null, null, `#${id}`);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && document.getElementById(hash)) {
+    showSection(hash);
+  }
+});
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──
+renderProducts();
+renderReviews();
+</script>
+</body>
+</html>
